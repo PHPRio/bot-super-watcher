@@ -27,17 +27,28 @@ $update = $telegram->getWebhookUpdates();
 $message = $update->getMessage();
 if($user = $message->getNewChatMember()) {
     $rawUser = (object)$user->getRawResponse();
+    $filename = getenv('METADATA_FILE');
     $metadata = json_decode(file_get_contents(getenv('METADATA_FILE')));
 
-    $isBanned = array_filter($metadata->banned, function($banned) use ($rawUser) {
-        if($rawUser == $banned) {
-            return $banned;
+    foreach($metadata->byRegex as $regex) {
+        if(preg_match('/'.$regex.'/', $rawUser->first_name)) {
+            $isBanned = $rawUser;
+            break;
         }
-    });
+    };
+    if(!$isBanned) {
+        foreach($metadata->banned as $banned) {
+            if($rawUser == $banned) {
+                $isBanned = $rawUser;
+                break;
+            }
+        };
+    }
     if($isBanned) {
        $telegram->kickChatMember([
            'chat_id' => $update->getChat()->getId(),
-           'user_id' => $isBanned[0]->id
+           'user_id' => $isBanned->id
        ]);
     }
+    
 }
