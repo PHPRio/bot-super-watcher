@@ -49,6 +49,20 @@ if($user = $message->getNewChatMember()) {
            'chat_id' => $update->getChat()->getId(),
            'user_id' => $isBanned->id
        ]);
+       $telegram->deleteMessage([
+           'chat_id' => $update->getChat()->getId(),
+           'message_id' => $message->getMessageId()
+       ]);
+       $telegram->sendMessage([
+           'chat_id' => $update->getChat()->getId(),
+           'text' => 'Menos um cheater!!!'
+       ]);
+       if(getenv('ADMIN_GROUP')) {
+           $telegram->sendMessage([
+               'chat_id' => getenv('ADMIN_GROUP'),
+               'text' => "BAN! Ban! Ban!!!\n".print_r($isBanned, true)
+           ]);
+       }
     }
     
 }
