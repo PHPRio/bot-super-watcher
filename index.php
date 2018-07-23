@@ -23,3 +23,21 @@ if(getenv('MOCK_JSON')) {
 }
 
 $update = $telegram->getWebhookUpdates();
+
+$message = $update->getMessage();
+if($user = $message->getNewChatMember()) {
+    $rawUser = (object)$user->getRawResponse();
+    $metadata = json_decode(file_get_contents(getenv('METADATA_FILE')));
+
+    $isBanned = array_filter($metadata->banned, function($banned) use ($rawUser) {
+        if($rawUser == $banned) {
+            return $banned;
+        }
+    });
+    if($isBanned) {
+       $telegram->kickChatMember([
+           'chat_id' => $update->getChat()->getId(),
+           'user_id' => $isBanned[0]->id
+       ]);
+    }
+}
