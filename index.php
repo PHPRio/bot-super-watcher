@@ -29,7 +29,7 @@ try {
     $user = $message->getNewChatMember();
 } catch (Exception $e){}
 
-if($user) {
+if(!empty($user)) {
     $rawUser = (object)$user->getRawResponse();
     $metadata = json_decode(file_get_contents(getenv('METADATA_FILE')));
 
