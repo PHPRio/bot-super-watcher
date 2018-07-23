@@ -7,6 +7,7 @@ require_once 'vendor/autoload.php';
 if(file_exists('.env')) {
     $dotenv = new Dotenv\Dotenv(__DIR__);
     $dotenv->load();
+    $dotenv->required(['TELEGRAM_BOT_TOKEN', 'METADATA_FILE']);
 }
 
 if(getenv('MOCK_JSON')) {
@@ -24,8 +25,8 @@ if(getenv('MOCK_JSON')) {
 
 $update = $telegram->getWebhookUpdates();
 
-$message = $update->getMessage();
 try {
+    $message = $update->getMessage();
     $user = $message->getNewChatMember();
 } catch (Exception $e){}
 
