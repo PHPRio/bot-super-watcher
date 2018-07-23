@@ -25,9 +25,12 @@ if(getenv('MOCK_JSON')) {
 $update = $telegram->getWebhookUpdates();
 
 $message = $update->getMessage();
-if($user = $message->getNewChatMember()) {
+try {
+    $user = $message->getNewChatMember();
+} catch (Exception $e){}
+
+if($user) {
     $rawUser = (object)$user->getRawResponse();
-    $filename = getenv('METADATA_FILE');
     $metadata = json_decode(file_get_contents(getenv('METADATA_FILE')));
 
     foreach($metadata->byRegex as $regex) {
