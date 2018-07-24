@@ -1,7 +1,7 @@
 # Super Watcher Bot
 Telegram bot for admin groups
 
-[SuperWatcherBot](https://t.me/SuperWatcherBot]_
+[SuperWatcherBot](https://t.me/SuperWatcherBot]
 
 This bot require 2 enviroments to work:
 
