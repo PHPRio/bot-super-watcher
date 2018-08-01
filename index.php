@@ -60,10 +60,6 @@ if(!empty($user)) {
            'chat_id' => $update->getChat()->getId(),
            'message_id' => $message->getMessageId()
        ]);
-       $telegram->sendMessage([
-           'chat_id' => $update->getChat()->getId(),
-           'text' => 'Menos um cheater!!!'
-       ]);
        if(getenv('ADMIN_GROUP')) {
            $telegram->sendMessage([
                'chat_id' => getenv('ADMIN_GROUP'),
