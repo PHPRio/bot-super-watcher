@@ -2,6 +2,7 @@
 
 # Composer
 /vendor/
+*.phar
 
 # Eclipse
 .buildpath
