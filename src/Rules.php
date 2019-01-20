@@ -27,11 +27,10 @@ class Rules
                 $user = $message->getNewChatMember();
             }
         }
-
         if(!empty($user)) {
             $rawUser = (object)$user->getRawResponse();
             $metadata = json_decode(file_get_contents(getenv('METADATA_FILE')));
-
+            
             foreach($metadata->byRegex as $regex) {
                 if(preg_match('/'.$regex.'/', $rawUser->first_name)) {
                     $isBanned = $rawUser;
@@ -54,10 +53,6 @@ class Rules
                 $this->telegram->deleteMessage([
                     'chat_id' => $this->update->getChat()->getId(),
                     'message_id' => $message->getMessageId()
-                ]);
-                $this->telegram->sendMessage([
-                    'chat_id' => $this->update->getChat()->getId(),
-                    'text' => 'Menos um cheater!!!'
                 ]);
                 if(getenv('ADMIN_GROUP')) {
                     $this->telegram->sendMessage([
@@ -82,10 +77,12 @@ class Rules
 //             'chat_id' => $this->update->getChat()->getId(),
 //             'message_id' => $message->getMessageId()
 //         ]);
-        $this->telegram->sendVoice([
-            'chat_id' => $this->update->getChat()->getId(),
-            'voice' => $message->getVoice()->getFileId(),
-            'caption' => print_r([$message->getFrom(),$message->getChat()], true)
-        ]);
+        if(getenv('ADMIN_GROUP')) {
+            $this->telegram->sendVoice([
+                'chat_id' => $this->update->getChat()->getId(),
+                'voice' => $message->getVoice()->getFileId(),
+                'caption' => print_r([$message->getFrom(),$message->getChat()], true)
+            ]);
+        }
     }
 }
