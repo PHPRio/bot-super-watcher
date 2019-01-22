@@ -22,7 +22,18 @@ services:
       XDEBUG_CONFIG: "remote_host=172.17.0.1 remote_enable=1"
     depends_on:
       - memcached
+      - postgres
   memcached:
     build: ./.docker/memcached
     env_file:
       - .env
+  postgres:
+    image: postgres:9.5
+    environment:
+      POSTGRES_DB: botadmin
+      POSTGRES_USER: botadmin
+      POSTGRES_PASSWORD: botadmin
+    ports:
+      - 5432
+    volumes:
+      - ./.docker/database/data:/var/lib/postgresql/data
