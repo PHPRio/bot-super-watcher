@@ -1,10 +1,14 @@
 <?php
 namespace Admin;
 
-use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
-use Admin\Models\Groups;
 
+
+/**
+ * 
+ * @method Models\ChatsRules      getChatsRules() Return ChatsRules model.
+ * @method Models\Chats           getChats()      Return Chats model.
+ */
 class Rules
 {
     /**
@@ -12,20 +16,24 @@ class Rules
      */
     private $telegram;
     /**
-     * @var Groups
-     */
-    private $groups;
-    /**
      * @var Update
      */
     private $update;
+    /**
+     * @var array
+     */
+    private $models = [];
     public function __construct(Api $telegram) {
         $this->telegram = $telegram;
-        $this->update = $telegram->getWebhookUpdate();
-        $this->groups = new Groups();
+        $this->update = $this->telegram->getWebhookUpdate();
+        $this->telegram->processObject($this->update);
+        if(property_exists($this->telegram, 'leave_chat')) {
+            return;
+        }
+        $this->telegram->processCommand($this->update);
     }
 
-    public function ban()
+    private function ban()
     {
         if($this->update->has('message')){
             $message = $this->update->getMessage();
@@ -71,7 +79,23 @@ class Rules
         }
     }
 
-    public function deleteAudio()
+    public function __call(string $method, $arguments)
+    {
+        $action = substr($method, 0, 3);
+        if ($action === 'get') {
+            return $this->getModel('Admin\Models\\'.substr($method, 3));
+        }
+    }
+
+    private function getModel($name)
+    {
+        if (!$this->models[$name]) {
+            $this->models[$name] = new $name();
+        }
+        return $this->models[$name];
+    }
+
+    private function deleteAudio()
     {
         if(!$this->update->has('message')){
             return;
@@ -80,7 +104,7 @@ class Rules
         if(!$message->has('voice')) {
             return;
         }
-        $adminGroupId = $this->groups->getChatById($this->update->getChat()->getId());
+        $adminGroupId = $this->getChats()->getChatById($this->update->getChat()->getId());
         if($this->update->getChat()->getId() != $adminGroupId) {
             $this->telegram->deleteMessage([
                 'chat_id' => $this->update->getChat()->getId(),
@@ -94,5 +118,30 @@ class Rules
                 'caption' => print_r([$message->getFrom(),$message->getChat()], true)
             ]);
         }
+    }
+
+    /**
+     * @return \Admin\Rules
+     */
+    public function apply()
+    {
+        if(property_exists($this->telegram, 'leave_chat')) {
+            return;
+        }
+        $rules = $this->getChatsRules()->getRules($this->update->getChat()->getId());
+        if ($rules) {
+            foreach($rules as $rule) {
+                $this->{$rule['rule']}();
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return \Admin\Rules
+     */
+    public function assignNews()
+    {
+        return $this;
     }
 }

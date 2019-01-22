@@ -1,7 +1,7 @@
 <?php
-use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 use Admin\Rules;
+use Admin\Api;
 
 require_once 'vendor/autoload.php';
 
@@ -24,7 +24,8 @@ if(getenv('MOCK_JSON')) {
     $telegram = new Api();
 }
 
+$telegram->addCommand(Admin\Commands\NewChatMemberCommand::class);
+$telegram->addCommand(Admin\Commands\TextCommand::class);
+return;
 $rules = new Rules($telegram);
-
-$rules->ban();
-$rules->deleteAudio();
+$rules->apply();

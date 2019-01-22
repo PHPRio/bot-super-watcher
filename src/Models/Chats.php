@@ -4,7 +4,7 @@ namespace Admin\Models;
 use Admin\Db;
 use Admin\Traits\Cache;
 
-class Groups extends Db
+class Chats extends Db
 {
     use Cache;
     public function getChatById($id)
@@ -15,7 +15,7 @@ class Groups extends Db
             return $chat;
         }
         $connection = $this->getConnection();
-        $stmt = $connection->prepare('SELECT * FROM groups WHERE chat_id = :chat_id');
+        $stmt = $connection->prepare('SELECT * FROM chat WHERE chat_id = :chat_id');
         $stmt->execute(['chat_id' => $id]);
         $chat = $stmt->fetch();
         $this->getCache()->save('chat_id:'.$id, $chat);
