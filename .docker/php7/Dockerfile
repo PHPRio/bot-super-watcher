@@ -3,7 +3,7 @@ FROM php:7.3-fpm
 RUN apt-get update
 
 # Install Postgre PDO
-RUN apt-get install -y git libpq-dev libmemcached-dev zlib1g-dev \
+RUN apt-get install -y git libpq-dev libmemcached-dev zlib1g-dev libzip-dev zip \
     && docker-php-ext-configure mysqli -with-mysqli=mysqlnd \
     && docker-php-ext-configure pdo_mysql -with-pdo-mysql=mysqlnd \
     && docker-php-ext-configure pgsql \
@@ -13,6 +13,9 @@ RUN pecl install xdebug-2.7.0beta1
 RUN docker-php-ext-enable xdebug
 RUN pecl install memcached
 RUN docker-php-ext-enable memcached
+
+RUN docker-php-ext-configure zip --with-libzip
+RUN docker-php-ext-install zip
 
 COPY config/php.ini /usr/local/etc/php/conf.d/
 
