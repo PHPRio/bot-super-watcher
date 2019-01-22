@@ -21,3 +21,4 @@
 
 # ignore all log files
 *.log
+.docker/database/

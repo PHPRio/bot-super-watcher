@@ -16,8 +16,10 @@ class ChatsRules extends Db
         $connection = $this->getConnection();
         $stmt = $connection->prepare('SELECT rule FROM chat_rule WHERE chat_id = :chat_id');
         $stmt->execute(['chat_id' => $chat_id]);
-        $rules = $stmt->fetch();
-        $this->getCache()->save('chat_rule_chat_id:'.$chat_id, $rules);
+        $rules = $stmt->fetchAll();
+        if ($rules) {
+            $this->getCache()->save('chat_rule_chat_id:'.$chat_id, $rules);
+        }
         return $rules;
     }
 }
