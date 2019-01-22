@@ -9,6 +9,7 @@ class Groups extends Db
     use Cache;
     public function getChatById($id)
     {
+        return getenv('ADMIN_GROUP');
         $chat = $this->getCache()->fetch('chat_id:'.$id);
         if ($chat) {
             return $chat;

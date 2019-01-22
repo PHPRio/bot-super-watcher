@@ -84,7 +84,7 @@ class Rules
             'chat_id' => $this->update->getChat()->getId(),
             'message_id' => $message->getMessageId()
         ]);
-        $adminGroupId = false;//$this->groups->getChatById($this->update->getChat()->getId());
+        $adminGroupId = $this->groups->getChatById($this->update->getChat()->getId());
         if($adminGroupId) {
             $this->telegram->sendVoice([
                 'chat_id' => $adminGroupId,
