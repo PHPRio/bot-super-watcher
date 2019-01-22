@@ -104,20 +104,25 @@ class Rules
         if(!$message->has('voice')) {
             return;
         }
-        $adminGroupId = $this->getChats()->getChatById($this->update->getChat()->getId());
-        if($adminGroupId) {
-            $this->telegram->sendVoice([
-                'chat_id' => $adminGroupId,
-                'voice' => $message->getVoice()->getFileId(),
-                'caption' => print_r([$message->getFrom(),$message->getChat()], true)
-            ]);
-        }
-        if($this->update->getChat()->getId() != $adminGroupId) {
-            $this->telegram->deleteMessage([
-                'chat_id' => $this->update->getChat()->getId(),
-                'message_id' => $message->getMessageId()
-            ]);
-        }
+        $adminGroup = $this->getChats()->getChatById($this->update->getChat()->getId());
+        $adminGroupId = !empty($adminGroup['admin_chat_id'])?$adminGroup['admin_chat_id']:null;
+        try {
+            if($adminGroupId) {
+                $this->telegram->sendVoice([
+                    'chat_id' => $adminGroupId,
+                    'voice' => $message->getVoice()->getFileId(),
+                    'caption' => json_encode(json_decode($message), JSON_PRETTY_PRINT)
+                ]);
+            }
+        } catch (\Exception $e) {}
+        try {
+            if($this->update->getChat()->getId() != $adminGroupId) {
+                $this->telegram->deleteMessage([
+                    'chat_id' => $this->update->getChat()->getId(),
+                    'message_id' => $message->getMessageId()
+                ]);
+            }
+        } catch (\Exception $e) {}
     }
 
     /**
