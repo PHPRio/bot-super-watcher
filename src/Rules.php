@@ -27,7 +27,7 @@ class Rules
         $this->telegram = $telegram;
         $this->update = $this->telegram->getWebhookUpdate();
         $this->telegram->processObject($this->update);
-        if(property_exists($this->telegram, 'leave_chat')) {
+        if(property_exists($this->telegram, 'stop')) {
             return;
         }
         $this->telegram->processCommand($this->update);
@@ -125,7 +125,7 @@ class Rules
      */
     public function apply()
     {
-        if(property_exists($this->telegram, 'leave_chat')) {
+        if(property_exists($this->telegram, 'stop')) {
             return;
         }
         $rules = $this->getChatsRules()->getRules($this->update->getChat()->getId());

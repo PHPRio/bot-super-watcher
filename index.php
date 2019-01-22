@@ -26,6 +26,6 @@ if(getenv('MOCK_JSON')) {
 
 $telegram->addCommand(Admin\Commands\NewChatMemberCommand::class);
 $telegram->addCommand(Admin\Commands\TextCommand::class);
-return;
+
 $rules = new Rules($telegram);
 $rules->apply();

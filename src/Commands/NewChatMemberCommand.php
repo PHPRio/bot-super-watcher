@@ -5,17 +5,17 @@ namespace Admin\Commands;
 use Telegram\Bot\Commands\Command;
 use Admin\Models\Chats;
 
-class TextCommand extends Command
+class NewChatMemberCommand extends Command
 {
     /**
      * @var string Command Name
      */
-    protected $name = "text";
+    protected $name = "new_chat_member";
     
     /**
      * @var string Command Description
      */
-    protected $description = "Text";
+    protected $description = "New chaht member joined";
     
     /**
      * @inheritdoc
@@ -39,10 +39,7 @@ class TextCommand extends Command
                 'text' => 'Sorry! Only admins can add me to this chat'
             ]);
             $this->getTelegram()->leaveChat(['chat_id' => $chat_id]);
-            $this->getTelegram()->leave_chat = true;
-            $chat->getConnection()->delete('chat', [
-                'chat_id' => $chat_id
-            ]);
+            $this->getTelegram()->stop = true;
             return;
         }
         $this->getTelegram()->sendMessage([

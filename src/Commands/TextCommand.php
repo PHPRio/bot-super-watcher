@@ -3,19 +3,19 @@
 namespace Admin\Commands;
 
 use Telegram\Bot\Commands\Command;
-use Admin\Models\Chats;
 
-class NewChatMemberCommand extends Command
+class TextCommand extends Command
 {
     /**
      * @var string Command Name
      */
-    protected $name = "new_chat_member";
+    
+    protected $name = "text";
     
     /**
      * @var string Command Description
      */
-    protected $description = "New chaht member joined";
+    protected $description = "Text";
     
     /**
      * @inheritdoc
@@ -36,6 +36,7 @@ class NewChatMemberCommand extends Command
                 'chat_id' => $chat_id,
                 'text' => 'I need a power! Please! Promote me to admin!'
             ]);
+            $this->getTelegram()->stop = true;
             return;
         }
     }
