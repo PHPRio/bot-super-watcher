@@ -106,12 +106,15 @@ class Rules
         }
         $adminGroupId = $this->getChats()->getChatById($this->update->getChat()->getId());
         if($this->update->getChat()->getId() != $adminGroupId) {
-            $this->telegram->deleteMessage([
-                'chat_id' => $this->update->getChat()->getId(),
-                'message_id' => $message->getMessageId()
-            ]);
+            try {
+                $this->telegram->deleteMessage([
+                    'chat_id' => $this->update->getChat()->getId(),
+                    'message_id' => $message->getMessageId()
+                ]);
+            } catch (\Exception $e) {
+            }
         }
-        if($adminGroupId) {
+        if($adminGroupId && empty($e)) {
             $this->telegram->sendVoice([
                 'chat_id' => $adminGroupId,
                 'voice' => $message->getVoice()->getFileId(),
