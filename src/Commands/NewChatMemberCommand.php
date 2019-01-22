@@ -24,7 +24,7 @@ class NewChatMemberCommand extends Command
     public function handle($arguments)
     {
         $member = $this->getUpdate()->getMessage()->getFrom();
-        if($member->getId() == $this->getTelegram()->getMe()->getId()) {
+        if($member->getId() != $this->getTelegram()->getMe()->getId()) {
             return;
         }
         $this->validateStart($this->getTelegram(), $this->getUpdate());
