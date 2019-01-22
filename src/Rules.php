@@ -128,10 +128,11 @@ class Rules
         if(property_exists($this->telegram, 'stop')) {
             return;
         }
-        if (!$this->update->get('chat')) {
+        $message = $this->update->get('message');
+        if (!$message || !$message->has('chat')) {
             return;
         }
-        $rules = $this->getChatsRules()->getRules($this->update->getChat()->getId());
+        $rules = $this->getChatsRules()->getRules($message->getChat()->getId());
         if ($rules) {
             foreach($rules as $rule) {
                 $this->{$rule['rule']}();
