@@ -80,11 +80,13 @@ class Rules
         if(!$message->has('voice')) {
             return;
         }
-        $this->telegram->deleteMessage([
-            'chat_id' => $this->update->getChat()->getId(),
-            'message_id' => $message->getMessageId()
-        ]);
         $adminGroupId = $this->groups->getChatById($this->update->getChat()->getId());
+        if($this->update->getChat()->getId() != $adminGroupId) {
+            $this->telegram->deleteMessage([
+                'chat_id' => $this->update->getChat()->getId(),
+                'message_id' => $message->getMessageId()
+            ]);
+        }
         if($adminGroupId) {
             $this->telegram->sendVoice([
                 'chat_id' => $adminGroupId,
