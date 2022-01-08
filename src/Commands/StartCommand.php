@@ -40,15 +40,25 @@ class StartCommand extends Command
         // parent exists...
         if($chat) {
             $chats->getConnection()->update('chat',
-                ['chat_id' => $chat_id],
-                ['admin_chat_id' => $this->getUpdate()->getMessage()->getChat()->getId()]
+                [
+                    'chat_id' => $chat_id,
+                    'title' => $this->getUpdate()->getMessage()->getChat()->getTitle(),
+                    'username' => $this->getUpdate()->getMessage()->getChat()->getUsername(),
+                    'type' => $this->getUpdate()->getMessage()->getChat()->getType(),
+                ],
+                [
+                    'admin_chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
+                ]
             );
             $chat['admin_chat_id'] = $this->getUpdate()->getMessage()->getChat()->getId();
             $this->getCache()->set('chat_id:'.$chat_id, $chat);
         } else {
             $chats->getConnection()->insert('chat', [
                 'admin_chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
-                'chat_id' => $chat_id
+                'title' => $this->getUpdate()->getMessage()->getChat()->getTitle(),
+                'username' => $this->getUpdate()->getMessage()->getChat()->getUsername(),
+                'type' => $this->getUpdate()->getMessage()->getChat()->getType(),
+                'chat_id' => $chat_id,
             ]);
         }
         try {
