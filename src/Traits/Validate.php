@@ -45,6 +45,13 @@ trait Validate
 
     public function exitIfIsNotchat() {
         if(!$this->getUpdate()->getMessage()->getChat() || !in_array($this->getUpdate()->getMessage()->getChat()->getType(), ['group', 'supergroup'])) {
+            if ($this->getUpdate()->getMessage()->getChat()->getType() === 'private') {
+                $this->getTelegram()->sendMessage([
+                    'chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
+                    'parse_mode' => 'markdown',
+                    'text' => 'This is not a group or supergroup',
+                ]);
+            }
             $this->getTelegram()->stop = true;
             throw new TelegramSDKException('Is not chat');
         }
