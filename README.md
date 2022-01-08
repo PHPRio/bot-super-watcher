@@ -3,7 +3,7 @@ Telegram bot for admin groups
 
 [SuperWatcherBot](https://t.me/SuperWatcherBot)
 
-## Deploy to production or run on development enviroment
+## Production or development enviroment
 
 To deploy or run locally this bot, need 2 enviroments to work:
 
