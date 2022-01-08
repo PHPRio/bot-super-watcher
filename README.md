@@ -3,12 +3,14 @@ Telegram bot for admin groups
 
 [SuperWatcherBot](https://t.me/SuperWatcherBot)
 
-## Production or development enviroment
+## Production or development
 
 To deploy or run locally this bot, need 2 enviroments to work:
 
 * token to TelegramBot Api
 * url to metadata file
+
+After clone the repository and run composer install, run `vendor/bin/phinx migrate`
 
 ## How to use
 
