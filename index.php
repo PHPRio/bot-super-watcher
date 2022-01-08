@@ -1,9 +1,8 @@
 <?php
 use Telegram\Bot\Objects\Update;
-use Admin\Rules;
 use Admin\Api;
+use Admin\Events\UpdateWasReceived;
 use League\Event\Emitter;
-use Telegram\Bot\Events\UpdateWasReceived;
 
 require_once 'vendor/autoload.php';
 
@@ -35,18 +34,7 @@ $telegram->addCommand(Admin\Commands\TextCommand::class);
 $telegram->addCommand(Admin\Commands\AddRuleCommand::class);
 
 $emitter = new Emitter();
-$emitter->addListener(UpdateWasReceived::class, function ($event) {
-    $type = $event->getUpdate()->detectType();
-    switch ($type) {
-        case 'message':
-            if ($event->getUpdate()->getMessage()->hasCommand()) {
-                return;
-            }
-            break;
-    }
-    $rules = new Rules($event->getTelegram());
-    $rules->apply();
-});
+$emitter->addListener(UpdateWasReceived::class, fn ($e) => $e->handle($e));
 $telegram->setEventEmitter($emitter);
 
 $telegram->commandsHandler(true);
