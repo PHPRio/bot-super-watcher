@@ -1,0 +1,1 @@
+release: vendor/bin/phinx migrate

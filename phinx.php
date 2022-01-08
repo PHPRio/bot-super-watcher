@@ -1,4 +1,6 @@
 <?php
+preg_match('/\/\/(?P<user>[^:]*):(?P<pass>[^@]*)@(?P<host>[^:]*):(?P<port>[^\/]*)\/(?P<name>.*)/', getenv('DATABASE_URL'), $matches);
+
 return [
     'paths' => [
         'migrations' => './db/migrations'
@@ -8,11 +10,11 @@ return [
             'default_database' => 'development',
             'development' => [
                 'adapter' => 'pgsql',
-                'host' => getenv('DB_HOST'),
-                'name' => getenv('DB_NAME'),
-                'user' => getenv('DB_USER'),
-                'pass' => getenv('DB_PASS'),
-                'port' => getenv('DB_PORT')
+                'host' => $matches['host'],
+                'name' => $matches['name'],
+                'user' => $matches['user'],
+                'pass' => $matches['pass'],
+                'port' => $matches['port']
             ]
         ]
 ];
