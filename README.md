@@ -3,7 +3,9 @@ Telegram bot for admin groups
 
 [SuperWatcherBot](https://t.me/SuperWatcherBot)
 
-This bot require 2 enviroments to work:
+## Deploy to production or run on development enviroment
+
+To deploy or run locally this bot, need 2 enviroments to work:
 
 * token to TelegramBot Api
 * url to metadata file
