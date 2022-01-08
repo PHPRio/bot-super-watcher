@@ -21,6 +21,11 @@ class StartCommand extends Command
      * @var string Command Description
      */
     protected $description = "Start this bot";
+
+    /**
+     * @var string Command Argument Pattern
+     */
+    protected $pattern = '{parent}';
     
     /**
      * @inheritdoc
@@ -30,9 +35,9 @@ class StartCommand extends Command
         try {
             $this->exitIfIsNotChat();
             $this->exitIfUserNotAdmin();
+            $this->exitIfYouIsNotAdminOnParent();
             $this->exitIfBotIsNotAdmin();
-            $message = $this->update->getMessage();
-            $chat_id = $message->getchat()->getId();
+            $chat_id = $this->update->getMessage()->getchat()->getId();
             $chats = new Chats();
             $chat = $chats->getChatById($chat_id);
             // parent exists...

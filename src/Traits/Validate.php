@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Traits;
 
+use Telegram\Bot\Exceptions\TelegramResponseException;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
 trait Validate
@@ -8,9 +9,9 @@ trait Validate
     public function exitIfBotIsNotAdmin() {
         $chatId = $this->getUpdate()->getMessage()->getChat()->getId();
         $userId = $this->getTelegram()->getMe()->getId();
-        $chatMember = $this->getChatMember($chatId, $userId);
+        $botChatMember = $this->getChatMember($chatId, $userId);
         // if the bot don't is admin, notify
-        if (!in_array($chatMember->get('status'), ["creator", "administrator"])) {
+        if (!in_array($botChatMember->get('status'), ["creator", "administrator"])) {
             $this->getTelegram()->sendMessage([
                 'chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
                 'parse_mode' => 'markdown',
@@ -18,7 +19,7 @@ trait Validate
                     "I need a power! Please! Before anything: promote me to admin!\n\n".
                     'Another question: '.
                         '[associate me]'.
-                        '(https://t.me/'.$this->getTelegram()->getMe()->getUsername().'/?startgroup='.
+                        '(https://t.me/'.$this->getTelegram()->getMe()->getUsername().'/?parent='.
                             $this->getUpdate()->getMessage()->getChat()->getId().
                         ') to group that you want to manage, '.
                     "and delete this message after.\n\n".
@@ -30,11 +31,35 @@ trait Validate
         }
     }
 
+    public function exitIfYouIsNotAdminOnParent() {
+        $userId = $this->getUpdate()->getMessage()->getFrom()->getId();
+        $args = $this->getArguments();
+        if (!key_exists('parent', $args)) {
+            $this->exitFromChatWithMessage('Invalid join link.');
+        }
+        $chatMember = $this->getChatMember($args['parent'], $userId);
+        if (!$chatMember) {
+            $this->exitFromChatWithMessage('You need be admin on admins chat.');
+        }
+    }
+
     public function exitIfIsNotchat() {
         if(!$this->getUpdate()->getMessage()->getChat() || !in_array($this->getUpdate()->getMessage()->getChat()->getType(), ['group', 'supergroup'])) {
             $this->getTelegram()->stop = true;
             throw new TelegramSDKException('Is not chat');
         }
+    }
+
+    public function exitFromChatWithMessage($message) {
+        $chatId = $this->getUpdate()->getMessage()->getChat()->getId();
+        $this->getTelegram()->sendMessage([
+            'chat_id' => $chatId,
+            'parse_mode' => 'markdown',
+            'text' => $message,
+        ]);
+        $this->getTelegram()->leaveChat(['chat_id' => $chatId]);
+        $this->getTelegram()->stop = true;
+        throw new TelegramSDKException('Invalid join link');
     }
 
     /**
@@ -70,11 +95,14 @@ trait Validate
         if ($chatMember) {
             return $chatMember;
         }
-        $chatMember = $this->getTelegram()->getChatMember([
-            'chat_id' => $chatId,
-            'user_id' => $memberId
-        ]);
-        $this->getCache()->set('chat_member:'.$chatId . '#' . $memberId, $chatMember);
-        return $chatMember;
+        try {
+            $chatMember = $this->getTelegram()->getChatMember([
+                'chat_id' => $chatId,
+                'user_id' => $memberId
+            ]);
+            $this->getCache()->set('chat_member:'.$chatId . '#' . $memberId, $chatMember);
+            return $chatMember;
+        } catch (TelegramResponseException $th) {
+        }
     }
 }
