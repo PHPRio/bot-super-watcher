@@ -27,41 +27,38 @@ class StartCommand extends Command
      */
     public function handle()
     {
-        $message = $this->update->getMessage();
-        $chat_id = $message->getchat()->getId();
-        if(!$chat_id) {
-            return;
-        }
-        if (!$this->validateStart($this->getTelegram(), $this->getUpdate())) {
-            return;
-        }
-        $chats = new Chats();
-        $chat = $chats->getChatById($chat_id);
-        // parent exists...
-        if($chat) {
-            $chats->getConnection()->update('chat',
-                [
-                    'chat_id' => $chat_id,
+        try {
+            $this->exitIfIsNotChat();
+            $this->exitIfUserNotAdmin();
+            $this->exitIfBotIsNotAdmin();
+            $message = $this->update->getMessage();
+            $chat_id = $message->getchat()->getId();
+            $chats = new Chats();
+            $chat = $chats->getChatById($chat_id);
+            // parent exists...
+            if($chat) {
+                $chats->getConnection()->update('chat',
+                    [
+                        'chat_id' => $chat_id,
+                        'title' => $this->getUpdate()->getMessage()->getChat()->getTitle(),
+                        'username' => $this->getUpdate()->getMessage()->getChat()->getUsername(),
+                        'type' => $this->getUpdate()->getMessage()->getChat()->getType(),
+                    ],
+                    [
+                        'admin_chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
+                    ]
+                );
+                $chat['admin_chat_id'] = $this->getUpdate()->getMessage()->getChat()->getId();
+                $this->getCache()->set('chat_id:'.$chat_id, $chat);
+            } else {
+                $chats->getConnection()->insert('chat', [
+                    'admin_chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
                     'title' => $this->getUpdate()->getMessage()->getChat()->getTitle(),
                     'username' => $this->getUpdate()->getMessage()->getChat()->getUsername(),
                     'type' => $this->getUpdate()->getMessage()->getChat()->getType(),
-                ],
-                [
-                    'admin_chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
-                ]
-            );
-            $chat['admin_chat_id'] = $this->getUpdate()->getMessage()->getChat()->getId();
-            $this->getCache()->set('chat_id:'.$chat_id, $chat);
-        } else {
-            $chats->getConnection()->insert('chat', [
-                'admin_chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
-                'title' => $this->getUpdate()->getMessage()->getChat()->getTitle(),
-                'username' => $this->getUpdate()->getMessage()->getChat()->getUsername(),
-                'type' => $this->getUpdate()->getMessage()->getChat()->getType(),
-                'chat_id' => $chat_id,
-            ]);
-        }
-        try {
+                    'chat_id' => $chat_id,
+                ]);
+            }
             $this->getTelegram()->sendMessage([
                 'chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
                 'text' =>

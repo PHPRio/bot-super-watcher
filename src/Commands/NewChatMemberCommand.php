@@ -4,6 +4,7 @@ namespace Admin\Commands;
 
 use Telegram\Bot\Commands\Command;
 use Admin\Traits\Validate;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class NewChatMemberCommand extends Command
 {
@@ -23,10 +24,13 @@ class NewChatMemberCommand extends Command
      */
     public function handle()
     {
-        $member = $this->getUpdate()->getMessage()->getFrom();
-        if($member->getId() != $this->getTelegram()->getMe()->getId()) {
-            return;
+        try {
+            $this->exitIfUserIsNotTheBot();
+            $this->exitIfIsNotChat();
+            $this->exitIfUserNotAdmin();
+            $this->exitIfBotIsNotAdmin();
+        } catch (TelegramSDKException $th) {
+            //throw $th;
         }
-        $this->validateStart($this->getTelegram(), $this->getUpdate());
     }
 }

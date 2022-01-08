@@ -36,6 +36,14 @@ $telegram->addCommand(Admin\Commands\AddRuleCommand::class);
 
 $emitter = new Emitter();
 $emitter->addListener(UpdateWasReceived::class, function ($event) {
+    $type = $event->getUpdate()->detectType();
+    switch ($type) {
+        case 'message':
+            if ($event->getUpdate()->getMessage()->hasCommand()) {
+                return;
+            }
+            break;
+    }
     $rules = new Rules($event->getTelegram());
     $rules->apply();
 });

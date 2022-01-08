@@ -14,11 +14,11 @@ After clone the repository and run composer install, run `vendor/bin/phinx migra
 
 ## How to use
 
-* Add this chat to the private admin group.
-  Is the group with admins of group to administrate.
+* Add this chat to the private admin group. Is the group with admins of group to administrate.
 * Add admin rules to bot on admin group
-* Access the link that you will see on admin group. Now the bot will be add to group to administrate
+* Access the link that you will see on admin group and forward the link to group that you want to administrate.
 * Add admin rules to this bot on group that you want administrate
+* Add new rule using the follow command
 
 ## Available commands
 

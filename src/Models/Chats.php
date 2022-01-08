@@ -18,7 +18,7 @@ class Chats extends Db
         $result = $stmt->executeQuery(['chat_id' => $id]);
         $chat = $result->fetchAssociative();
         if ($chat) {
-            $this->getCache()->set('chat_id:'.$id, $chat);
+            $this->getCache()->set('chat_id:'.$id, $chat, time() + 60*10); // 10 min
         }
         return $chat;
     }
