@@ -1,25 +1,25 @@
 version: '3.1'
 services:
-  webhook:
-    image: webdevops/apache:latest
-    depends_on:
-      - php7
-    ports:
-      - 80:80
-    volumes:
-      - .:/var/www/html
-    environment:
-      WEB_PHP_SOCKET: "php7:9000"
-      WEB_DOCUMENT_ROOT: "/var/www/html"
-  php7:
-    build: ./.docker/php7
+  # webhook:
+  #   image: webdevops/apache:latest
+  #   depends_on:
+  #     - php
+  #   ports:
+  #     - 80:80
+  #   volumes:
+  #     - .:/var/www/html
+  #   environment:
+  #     WEB_PHP_SOCKET: "php:9000"
+  #     WEB_DOCUMENT_ROOT: "/var/www/html"
+  php:
+    build: ./.docker/php
     restart: always
     env_file:
       - .env
     volumes:
       - .:/var/www/html
     environment:
-      XDEBUG_CONFIG: "remote_host=172.17.0.1 remote_enable=1"
+      XDEBUG_CONFIG: client_host=172.17.0.1 client_port=9003 start_with_request=yes
     depends_on:
       - memcached
       - postgres
@@ -28,12 +28,12 @@ services:
     env_file:
       - .env
   postgres:
-    image: postgres:9.5
+    image: postgres
     environment:
       POSTGRES_DB: botadmin
-      POSTGRES_USER: botadmin
-      POSTGRES_PASSWORD: botadmin
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - 5432
+      - 5432:5432
     volumes:
       - ./.docker/database/data:/var/lib/postgresql/data

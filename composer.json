@@ -3,10 +3,10 @@
         "php": ">=7.3",
         "ext-memcached": "*",
         "ext-pdo": "*",
-        "irazasyed/telegram-bot-sdk": "dev-master",
-        "vlucas/phpdotenv": ">=3.1",
-        "robmorgan/phinx": "^0.10.6",
-        "doctrine/dbal": "^2.9"
+        "irazasyed/telegram-bot-sdk": "^3.4",
+        "vlucas/phpdotenv": "^5.4",
+        "robmorgan/phinx": "^0.12.9",
+        "doctrine/dbal": "^3.2"
     },
     "autoload" : {
         "psr-4" : {

@@ -1,6 +1,7 @@
 <?php
 namespace Admin;
 
+use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Objects\Update;
 
 
@@ -25,12 +26,7 @@ class Rules
     private $models = [];
     public function __construct(Api $telegram) {
         $this->telegram = $telegram;
-        $this->update = $this->telegram->getWebhookUpdate();
-        $this->telegram->processObject($this->update);
-        if(property_exists($this->telegram, 'stop')) {
-            return;
-        }
-        $this->telegram->processCommand($this->update);
+        $this->update = $this->telegram->getWebhookUpdate(false);
     }
 
     private function ban()
@@ -60,18 +56,22 @@ class Rules
                 };
             }
             if($isBanned) {
-                $this->telegram->kickChatMember([
-                    'chat_id' => $this->update->getChat()->getId(),
-                    'user_id' => $isBanned->id
-                ]);
-                $this->telegram->deleteMessage([
-                    'chat_id' => $this->update->getChat()->getId(),
-                    'message_id' => $message->getMessageId()
-                ]);
-                $adminGroupId = $this->getAdminGroupId($this->update->getChat()->getId());
-                if($adminGroupId) {
+                try {
+                    $this->telegram->kickChatMember([
+                        'chat_id' => $this->update->getChat()->getId(),
+                        'user_id' => $isBanned->id
+                    ]);
+                    $this->telegram->deleteMessage([
+                        'chat_id' => $this->update->getChat()->getId(),
+                        'message_id' => $message->getMessageId()
+                    ]);
+                } catch (TelegramSDKException $th) {
+                    //throw $th;
+                }
+                $chat = $this->getChats()->getChatById($this->update->getChat()->getId());
+                if($chat && $chat['admin_chat_id']) {
                     $this->telegram->sendMessage([
-                        'chat_id' => $adminGroupId,
+                        'chat_id' => $chat['admin_chat_id'],
                         'text' => "BAN! Ban! Ban!!!\n".print_r($isBanned, true)
                     ]);
                 }
@@ -89,7 +89,7 @@ class Rules
 
     private function getModel($name)
     {
-        if (!$this->models[$name]) {
+        if (empty($this->models[$name])) {
             $this->models[$name] = new $name();
         }
         return $this->models[$name];

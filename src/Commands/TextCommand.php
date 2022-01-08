@@ -16,12 +16,12 @@ class TextCommand extends Command
     /**
      * @var string Command Description
      */
-    protected $description = "Text";
+    protected $description = "Check if bot is admin";
     
     /**
      * @inheritdoc
      */
-    public function handle($arguments)
+    public function handle()
     {
         $message = $this->getUpdate()->getMessage();
         // dont parse commands

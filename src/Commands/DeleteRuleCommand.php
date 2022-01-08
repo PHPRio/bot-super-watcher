@@ -8,18 +8,18 @@ use Admin\Models\ChatsRules;
 use Admin\Traits\Validate;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
-class AddRuleCommand extends Command
+class DeleteRuleCommand extends Command
 {
     use Validate;
     /**
      * @var string Command Name
      */
-    protected $name = "addrule";
+    protected $name = "deleterule";
     
     /**
      * @var string Command Description
      */
-    protected $description = "Add new rule";
+    protected $description = "Delete rule";
 
     /**
      * @var string Command Argument Pattern
@@ -57,6 +57,6 @@ class AddRuleCommand extends Command
         }
 
         $chatRules = new ChatsRules();
-        $chatRules->addRule($this->getUpdate()->getMessage()->getChat()->getId(), $arguments['rule_name']);
+        $chatRules->deleteRule($this->getUpdate()->getMessage()->getChat()->getId(), $arguments['rule_name']);
     }
 }

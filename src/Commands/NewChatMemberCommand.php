@@ -21,7 +21,7 @@ class NewChatMemberCommand extends Command
     /**
      * @inheritdoc
      */
-    public function handle($arguments)
+    public function handle()
     {
         $member = $this->getUpdate()->getMessage()->getFrom();
         if($member->getId() != $this->getTelegram()->getMe()->getId()) {

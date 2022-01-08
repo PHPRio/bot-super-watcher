@@ -14,7 +14,7 @@ class Api extends TelegramApi
         $message = $update->getMessage();
 
         if ($message !== null) {
-            $this->getCommandBus()->handler('/'.$message->detectType(), $update);
+            $this->getCommandBus()->handler($update);
         }
     }
 }
