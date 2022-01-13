@@ -8,7 +8,7 @@ trait Validate
 {
     public function exitIfBotIsNotAdmin() {
         $chatId = $this->getUpdate()->getMessage()->getChat()->getId();
-        $userId = $this->getTelegram()->getMe()->getId();
+        $userId = $this->getMe()->getId();
         $botChatMember = $this->getChatMember($chatId, $userId);
         // if the bot don't is admin, notify
         if (!in_array($botChatMember->get('status'), ["creator", "administrator"])) {
@@ -19,7 +19,7 @@ trait Validate
                     "I need a power! Please! Before anything: promote me to admin!\n\n".
                     'Another question: '.
                         '[associate me]'.
-                        '(https://t.me/'.$this->getTelegram()->getMe()->getUsername().'/?parent='.
+                        '(https://t.me/'.$this->getMe()->getUsername().'/?parent='.
                             $this->getUpdate()->getMessage()->getChat()->getId().
                         ') to group that you want to manage, '.
                     "and delete this message after.\n\n".
@@ -92,7 +92,7 @@ trait Validate
 
     public function exitIfUserIsNotTheBot() {
         $member = $this->getUpdate()->getMessage()->getFrom();
-        if($member->getId() != $this->getTelegram()->getMe()->getId()) {
+        if($member->getId() != $this->getMe()->getId()) {
             throw new TelegramSDKException('User is not the bot');
         }
     }

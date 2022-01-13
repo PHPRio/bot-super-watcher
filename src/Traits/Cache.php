@@ -1,6 +1,8 @@
 <?php
 namespace Admin\Traits;
 
+use Telegram\Bot\Objects\User;
+
 trait Cache
 {
     /**
@@ -22,5 +24,15 @@ trait Cache
             $this->memcache->setSaslAuthData($_ENV['MEMCACHEDCLOUD_USERNAME'], $_ENV['MEMCACHEDCLOUD_PASSWORD']);
         }
         return $this->memcache;
+    }
+
+    public function getMe(): User
+    {
+        $me = $this->getCache()->get('me');
+        if (!$me) {
+            $me = $this->getTelegram()->getMe();
+            $this->getCache()->set('me', $me);
+        }
+        return $me;
     }
 }

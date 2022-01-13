@@ -29,18 +29,18 @@ class TextCommand extends Command
             return;
         }
         // dont parse messages from this bot
-        if($message->getFrom()->getId() == $this->getTelegram()->getMe()->getId()) {
+        if($message->getFrom()->getId() == $this->getMe()->getId()) {
             return;
         }
-        if(!$this->issAdmin()) {
+        if(!$this->isAdmin()) {
             return;
         }
     }
-    private function issAdmin()
+    private function isAdmin()
     {
         $chatMember = $this->getTelegram()->getChatMember([
             'chat_id' => $this->getUpdate()->getMessage()->getChat()->getId(),
-            'user_id' => $this->getTelegram()->getMe()->getId()
+            'user_id' => $this->getMe()->getId()
         ]);
         if (!in_array($chatMember->get('status'), ["creator", "administrator"])) {
             $this->getTelegram()->sendMessage([
