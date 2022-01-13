@@ -18,6 +18,7 @@ class UpdateWasReceived extends EventsUpdateWasReceived
     use Validate;
     public function handle($event) {
         try {
+            syslog(LOG_WARNING, 'Start update');
             $type = $event->getUpdate()->detectType();
             switch ($type) {
                 case 'message':
