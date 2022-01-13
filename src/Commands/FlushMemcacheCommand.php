@@ -31,6 +31,7 @@ class FlushMemcacheCommand extends Command
             $this->exitIfUserNotAdmin();
             $this->exitIfBotIsNotAdmin();
             $this->getCache()->flush();
+            $this->getTelegram()->stop = true;
         } catch (TelegramSDKException $th) {
         }
     }
