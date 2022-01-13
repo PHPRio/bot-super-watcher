@@ -32,6 +32,7 @@ $telegram->addCommand(Admin\Commands\NewChatMemberCommand::class);
 $telegram->addCommand(Admin\Commands\StartCommand::class);
 $telegram->addCommand(Admin\Commands\TextCommand::class);
 $telegram->addCommand(Admin\Commands\AddRuleCommand::class);
+$telegram->addCommand(Admin\Commands\FlushMemcacheCommand::class);
 
 $emitter = new Emitter();
 $emitter->addListener(UpdateWasReceived::class, fn ($e) => $e->handle($e));
