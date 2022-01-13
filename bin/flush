@@ -13,4 +13,6 @@ $memcache->addServers(array_map(function($server) { return explode(':', $server,
 if(!empty($_ENV['MEMCACHEDCLOUD_USERNAME'])) {
     $memcache->setSaslAuthData($_ENV['MEMCACHEDCLOUD_USERNAME'], $_ENV['MEMCACHEDCLOUD_PASSWORD']);
 }
+echo "Flushing memcache\r";
 $memcache->flush();
+echo "Memcache flushed\r";
