@@ -1,5 +1,12 @@
 <?php
 
+require_once 'vendor/autoload.php';
+
+if(file_exists('.env')) {
+    $dotenv = Dotenv\Dotenv::createMutable(__DIR__ . '/../');
+    $dotenv->load();
+}
+
 if (PHP_SAPI !== 'cli' 
     || empty($_ENV['MEMCACHEDCLOUD_SERVERS'])
     || empty($_ENV['MEMCACHEDCLOUD_USERNAME'])
@@ -13,6 +20,6 @@ $memcache->addServers(array_map(function($server) { return explode(':', $server,
 if(!empty($_ENV['MEMCACHEDCLOUD_USERNAME'])) {
     $memcache->setSaslAuthData($_ENV['MEMCACHEDCLOUD_USERNAME'], $_ENV['MEMCACHEDCLOUD_PASSWORD']);
 }
-echo "Flushing memcache\r";
+echo "Flushing memcache\n";
 $memcache->flush();
-echo "Memcache flushed\r";
+echo "Memcache flushed\n";
