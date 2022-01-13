@@ -17,7 +17,7 @@ class NewChatMemberCommand extends Command
     /**
      * @var string Command Description
      */
-    protected $description = "New chaht member joined";
+    protected $description = "New chat member joined";
     
     /**
      * @inheritdoc
