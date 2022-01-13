@@ -1,1 +1,1 @@
-release: vendor/bin/phinx migrate
+release: vendor/bin/phinx migrate && php bin/flush

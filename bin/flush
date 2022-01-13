@@ -1,0 +1,16 @@
+<?php
+
+if (PHP_SAPI !== 'cli' 
+    || empty($_ENV['MEMCACHEDCLOUD_SERVERS'])
+    || empty($_ENV['MEMCACHEDCLOUD_USERNAME'])
+    || empty($_ENV['MEMCACHEDCLOUD_PASSWORD'])) {
+    return;
+}
+
+$memcache = new \Memcached();
+$memcache->setOption(\Memcached::OPT_BINARY_PROTOCOL, true);
+$memcache->addServers(array_map(function($server) { return explode(':', $server, 2); }, explode(',', $_ENV['MEMCACHEDCLOUD_SERVERS'])));
+if(!empty($_ENV['MEMCACHEDCLOUD_USERNAME'])) {
+    $memcache->setSaslAuthData($_ENV['MEMCACHEDCLOUD_USERNAME'], $_ENV['MEMCACHEDCLOUD_PASSWORD']);
+}
+$memcache->flush();
